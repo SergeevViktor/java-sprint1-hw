@@ -1,6 +1,7 @@
-import java.util.Scanner;
 public class StepTracker {
     int targetSteps = 10000;
+    Converter converter = new Converter();
+
     MonthData[] monthToData;
 
     public StepTracker() {
@@ -10,90 +11,69 @@ public class StepTracker {
         }
     }
 
-    void changeTargetSteps(Scanner scanner) {
-        System.out.println("Введите новое значение: ");
-        int target = scanner.nextInt();
-        while (true) {
-            if (target < 0) {
-                System.out.println("Нельзя указать отрицательное значение. Повторите попытку:");
-                target = scanner.nextInt();
-            } else {
-                targetSteps = target;
-                break;
-            }
-        }
-        System.out.println("Запись сохранена.");
-        System.out.println("Новая цель " + targetSteps + " шагов.");
+    void changeTargetSteps(int target) {
+        targetSteps = target;
     }
 
-    class MonthData {
-        int[] days = new int[30];
-        Converter converter = new Converter();
-        void newDataPerDay(int day, int month, Scanner scanner) {
-            int newStepPerDay = scanner.nextInt();
-            while (true) {
-                if (newStepPerDay < 0) {
-                    System.out.println("Нельзя указать отрицательное значение. Повторите попытку:");
-                    newStepPerDay = scanner.nextInt();
-                } else {
-                    monthToData[month - 1].days[day - 1] = newStepPerDay;
-                    days[day - 1] = monthToData[month - 1].days[day - 1];
-                    break;
-                }
+    void newDataPerDay(int day, int month, int newStepPerDay) {
+        monthToData[month].days[day - 1] = newStepPerDay;
+    }
+
+    void stepsPerMonth(int month) {
+        for (int i = 0; i < monthToData[month].days.length; i++) {
+            System.out.print((i + 1) + " день: " + monthToData[month].days[i] + ", ");
+            if (i == 29) {
+                System.out.println((i + 1) + " день: " + monthToData[month].days[i]);
             }
         }
+    }
 
-        void stepsPerMonth() {
-            for (int i = 0; i < days.length; i++) {
-                System.out.println((i + 1) + " день: " + days[i]);
+    int maxStepsPerMonth(int month) {
+        int maxSteps = 0;
+        for (int i = 0; i < monthToData[month].days.length; i++) {
+            if (maxSteps < monthToData[month].days[i]) {
+                maxSteps = monthToData[month].days[i];
             }
         }
+        return maxSteps;
+    }
 
-        int maxStepsPerMonth() {
-            int maxSteps = 0;
-            for (int i = 0; i < days.length; i++) {
-                if (maxSteps < days[i]) {
-                    maxSteps = days[i];
-                }
-            }
-            return maxSteps;
+    public int amountStepsPerMonth(int month) {
+        int sum = 0;
+        for (int i = 0; i < monthToData[month].days.length; i++) {
+            sum = sum + monthToData[month].days[i];
         }
+        return sum;
+    }
 
-        public double amountStepsPerMonth() {
-            double sum = 0.0;
-            for (int i = 0; i < days.length; i++) {
-                sum = sum + days[i];
-            }
-            return sum;
-        }
+    double meanStepsPerMonth(int month) {
+        return (double) amountStepsPerMonth(month) / monthToData[month].days.length;
+    }
 
-        double meanStepsPerMonth() {
-            return amountStepsPerMonth() / days.length;
-        }
-
-        int theBestStreak() {
-            int streak = 1;
-            int goalStreak = 0;
-            for (int i = 0; i < days.length; i++) {
-                while (days[i] >= targetSteps) {
-                    if (days[i + 1] >= targetSteps) {
+    int theBestStreak(int month) {
+        int streak = 1;
+        int goalStreak = 0;
+        for (int i = 0; i < monthToData[month].days.length; i++) {
+            if (monthToData[month].days[i] >= targetSteps) {
+                if (monthToData[month].days[i] != monthToData[month].days[monthToData[month].days.length - 1]) {
+                    if (monthToData[month].days[i + 1] >= targetSteps) {
                         streak = streak + 1;
-                    } else if (goalStreak < streak) {
-                        goalStreak = streak;
-                    } else {
-                        streak = 1;
                     }
                 }
+            } else if (goalStreak < streak) {
+                goalStreak = streak;
+            } else {
+                streak = 1;
             }
-            return goalStreak;
         }
+        return goalStreak;
+    }
 
-        double distanceCovered(int month, StepTracker stepTracker) {
-            return converter.calculationDistance(month, stepTracker);
-        }
+    double distanceCovered(int month, StepTracker stepTracker) {
+        return converter.calculationDistance(month, stepTracker);
+    }
 
-        double burnedKilocalories(int month, StepTracker stepTracker) {
-            return converter.calculationKilocalories(month, stepTracker);
-        }
+    double burnedKilocalories(int month, StepTracker stepTracker) {
+        return converter.calculationKilocalories(month, stepTracker);
     }
 }
