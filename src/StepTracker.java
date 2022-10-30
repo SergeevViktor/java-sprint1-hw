@@ -21,9 +21,10 @@ public class StepTracker {
 
     void stepsPerMonth(int month) {
         for (int i = 0; i < monthToData[month].days.length; i++) {
-            System.out.print((i + 1) + " день: " + monthToData[month].days[i] + ", ");
             if (i == 29) {
                 System.out.println((i + 1) + " день: " + monthToData[month].days[i]);
+            } else {
+                System.out.print((i + 1) + " день: " + monthToData[month].days[i] + ", ");
             }
         }
     }
@@ -51,19 +52,16 @@ public class StepTracker {
     }
 
     int theBestStreak(int month) {
-        int streak = 1;
+        int streak = 0;
         int goalStreak = 0;
         for (int i = 0; i < monthToData[month].days.length; i++) {
             if (monthToData[month].days[i] >= targetSteps) {
-                if (monthToData[month].days[i] != monthToData[month].days[monthToData[month].days.length - 1]) {
-                    if (monthToData[month].days[i + 1] >= targetSteps) {
-                        streak = streak + 1;
-                    }
+                streak = streak + 1;
+                if (goalStreak < streak) {
+                    goalStreak = streak;
                 }
-            } else if (goalStreak < streak) {
-                goalStreak = streak;
             } else {
-                streak = 1;
+                streak = 0;
             }
         }
         return goalStreak;
@@ -77,3 +75,5 @@ public class StepTracker {
         return converter.calculationKilocalories(month, stepTracker);
     }
 }
+// if (monthToData[month].days[i] != monthToData[month].days[monthToData[month].days.length - 1]) {
+// if (monthToData[month].days[i + 1] >= targetSteps) {

@@ -3,29 +3,30 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StepTracker stepTracker = new StepTracker();
-        printMenu();
-        int userInput = scanner.nextInt();
+        int userInput;
 
-        while (userInput != 4) {
+        while (true) {
+            printMenu();
+            userInput = scanner.nextInt();
             if (userInput == 1) {
                 System.out.println("За какой месяц Вы хотите ввести данные (от 0-(Январь) до 11 (Декабрь)) ?");
                 int month = scanner.nextInt();
                 if (month < 0 || month > 11) {
                     System.out.println("Команда не поддерживается. Выберете месяц в указанном диапозоне.");
-                    month = scanner.nextInt();
+                    continue;
                 }
                 System.out.println("За какой день Вы хотите ввести данные (от 1 до 30) ?");
                 int day = scanner.nextInt();
                 if (day < 1 || day > 30) {
                     System.out.println("Команда не поддерживается. Выберете день в указанном диапозоне.");
-                    day = scanner.nextInt();
+                    continue;
                 }
                 System.out.println("Количество шагов в " + day + "-й день:" + stepTracker.monthToData[month].days[day - 1]);
                 System.out.println("Какое количество шагов Вы сделали за день?");
                 int newStepPerDay = scanner.nextInt();
                 if (newStepPerDay < 0) {
-                    System.out.println("Нельзя указать отрицательное значение. Повторите попытку:");
-                    newStepPerDay = scanner.nextInt();
+                    System.out.println("Нельзя указать отрицательное значение.");
+                    continue;
                 }
                 stepTracker.newDataPerDay(day, month, newStepPerDay);
                 System.out.println("Запись сохранена.");
@@ -36,7 +37,7 @@ public class Main {
                 int month = scanner.nextInt();
                 if (month < 0 || month > 11) {
                     System.out.println("Команда не поддерживается. Выберете месяц в указанном диапозоне.");
-                    month = scanner.nextInt();
+                    continue;
                 }
                 System.out.println("Количество пройденый шагов:");
                 stepTracker.stepsPerMonth(month);
@@ -52,18 +53,18 @@ public class Main {
                 System.out.println("Введите новое значение: ");
                 int target = scanner.nextInt();
                 if (target < 0) {
-                    System.out.println("Нельзя указать отрицательное значение. Повторите попытку:");
-                    target = scanner.nextInt();
+                    System.out.println("Нельзя указать отрицательное значение.");
+                    continue;
                 }
                 stepTracker.changeTargetSteps(target);
                 System.out.println("Запись сохранена.");
                 System.out.println("Новая цель " + stepTracker.targetSteps + " шагов.");
 
+            } else if (userInput == 4) {
+                break;
             } else {
                 System.out.println("Такой команды нет.");
             }
-            printMenu();
-            userInput = scanner.nextInt();
         }
         System.out.println("Программа завершена");
     }
